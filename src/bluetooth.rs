@@ -1,10 +1,12 @@
-use btleplug::api::{Central, Manager as _, Peripheral as _, ScanFilter};
+use btleplug::api::{Central, Manager as _, Peripheral as _, ScanFilter, Characteristic, CharPropFlags};
 use btleplug::platform::{Adapter, Manager, Peripheral};
-use std::error::Error;
+use btleplug::Error;
 use std::time::Duration;
 use tokio::time;
+use uuid::Uuid;
+use std::collections::BTreeSet;
 
-pub async fn show_camera_info() -> Result<(), Box<dyn Error>> {
+pub async fn show_camera_info() -> Result<(), Error> {
     let mgr = Manager::new().await?;
     let adapter = mgr
         .adapters()
@@ -22,18 +24,38 @@ pub async fn show_camera_info() -> Result<(), Box<dyn Error>> {
     println!("is connected? {}", cam.is_connected().await?);
 
     if ! cam.is_connected().await? {
+        println!("trying to connect...");
         cam.connect().await?
     }
 
     println!("is connected? {}", cam.is_connected().await?);
 
-    //cam.discover_services().await?;
-
+    cam.discover_services().await?;
     //for s in cam.services() {
-    //    println!("{}", s.uuid)
+    //    println!(
+    //        "Service UUID {}, primary: {}",
+    //        s.uuid, s.primary
+    //    );
+    //    for characteristic in s.characteristics {
+    //        println!("{:?}", characteristic);
+    //    }
     //}
 
-    //println!("TODO: camera info");
+    let ch = Characteristic {
+        uuid: Uuid::parse_str("b5f90006-aa8d-11e3-9046-0002a5d5c51b")?,
+        service_uuid: Uuid::parse_str("b5f90001-aa8d-11e3-9046-0002a5d5c51b")?,
+        properties: CharPropFlags::READ,
+        descriptors: BTreeSet::new()
+    };
+
+    println!("waiting for reply...");
+    let ret = cam.read(&ch).await?;
+    println!("reply received!");
+
+    println!("raw ret = {:?}", ret);
+    println!("ret = {}", String::from_utf8(ret).unwrap());
+
+    //cam.disconnect().await?;
 
     Ok(())
 }

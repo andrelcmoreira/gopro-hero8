@@ -1,7 +1,4 @@
-use std::io::Error;
 
-pub fn list_media() -> Result<(), Error> {
+pub async fn list_camera_media() {
     println!("TODO: list media");
-
-    Ok(())
 }

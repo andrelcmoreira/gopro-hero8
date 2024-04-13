@@ -1,11 +1,12 @@
 use std::env::args;
-use std::error::Error;
+
+use btleplug::Error;
 
 use gp8ctl::bluetooth::*;
 use gp8ctl::wifi::*;
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn Error>> {
+async fn main() -> Result<(), Error> {
     let args = args().collect::<Vec<String>>();
 
     if args.len() > 1 {
@@ -16,7 +17,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
         match cmd.as_str() {
             "--show-camera-info" => show_camera_info().await?,
-            "--list-media" => list_media()?,
+            "--list-media" => list_camera_media().await,
             _ => println!("command not available")
         }
     }
