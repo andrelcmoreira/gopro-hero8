@@ -41,12 +41,77 @@ pub async fn show_camera_info() -> Result<(), Error> {
     //    }
     //}
 
+    // field: vendor data
+    //let ch = Characteristic {
+    //    uuid: Uuid::parse_str("b5f90006-aa8d-11e3-9046-0002a5d5c51b")?,
+    //    service_uuid: Uuid::parse_str("b5f90001-aa8d-11e3-9046-0002a5d5c51b")?,
+    //    properties: CharPropFlags::READ,
+    //    descriptors: BTreeSet::new()
+    //};
+
+    // field: vendor data  (wifi password)
+    //let ch = Characteristic {
+    //    uuid: Uuid::parse_str("b5f90003-aa8d-11e3-9046-0002a5d5c51b")?,
+    //    service_uuid: Uuid::parse_str("b5f90001-aa8d-11e3-9046-0002a5d5c51b")?,
+    //    properties: CharPropFlags::READ,
+    //    descriptors: BTreeSet::new()
+    //};
+
+    // field: vendor data  (wifi ssid)
     let ch = Characteristic {
-        uuid: Uuid::parse_str("b5f90006-aa8d-11e3-9046-0002a5d5c51b")?,
+        uuid: Uuid::parse_str("b5f90002-aa8d-11e3-9046-0002a5d5c51b")?,
         service_uuid: Uuid::parse_str("b5f90001-aa8d-11e3-9046-0002a5d5c51b")?,
         properties: CharPropFlags::READ,
         descriptors: BTreeSet::new()
     };
+
+    // field: software revision
+    //let ch = Characteristic {
+    //    uuid: Uuid::parse_str("00002a28-0000-1000-8000-00805f9b34fb")?,
+    //    service_uuid: Uuid::parse_str("0000180a-0000-1000-8000-00805f9b34fb")?,
+    //    properties: CharPropFlags::READ,
+    //    descriptors: BTreeSet::new()
+    //};
+
+    // field: firmware revision
+    //let ch = Characteristic {
+    //    uuid: Uuid::parse_str("00002a26-0000-1000-8000-00805f9b34fb")?,
+    //    service_uuid: Uuid::parse_str("0000180a-0000-1000-8000-00805f9b34fb")?,
+    //    properties: CharPropFlags::READ,
+    //    descriptors: BTreeSet::new()
+    //};
+
+    // field: hardware revision
+    //let ch = Characteristic {
+    //    uuid: Uuid::parse_str("00002a27-0000-1000-8000-00805f9b34fb")?,
+    //    service_uuid: Uuid::parse_str("0000180a-0000-1000-8000-00805f9b34fb")?,
+    //    properties: CharPropFlags::READ,
+    //    descriptors: BTreeSet::new()
+    //};
+
+    // field: serial number
+    //let ch = Characteristic {
+    //    uuid: Uuid::parse_str("00002a25-0000-1000-8000-00805f9b34fb")?,
+    //    service_uuid: Uuid::parse_str("0000180a-0000-1000-8000-00805f9b34fb")?,
+    //    properties: CharPropFlags::READ,
+    //    descriptors: BTreeSet::new()
+    //};
+
+    // field: model number
+    //let ch = Characteristic {
+    //    uuid: Uuid::parse_str("00002a24-0000-1000-8000-00805f9b34fb")?,
+    //    service_uuid: Uuid::parse_str("0000180a-0000-1000-8000-00805f9b34fb")?,
+    //    properties: CharPropFlags::READ,
+    //    descriptors: BTreeSet::new()
+    //};
+
+    // field: manufacturer name
+    //let ch = Characteristic {
+    //    uuid: Uuid::parse_str("00002a29-0000-1000-8000-00805f9b34fb")?,
+    //    service_uuid: Uuid::parse_str("0000180a-0000-1000-8000-00805f9b34fb")?,
+    //    properties: CharPropFlags::READ,
+    //    descriptors: BTreeSet::new()
+    //};
 
     println!("waiting for reply...");
     let ret = cam.read(&ch).await?;
