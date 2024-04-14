@@ -1,10 +1,97 @@
-use btleplug::api::{Central, Manager as _, Peripheral as _, ScanFilter, Characteristic, CharPropFlags};
+use btleplug::api::{Central, Manager as _, Peripheral as _, ScanFilter,
+                    Characteristic, CharPropFlags};
 use btleplug::platform::{Adapter, Manager, Peripheral};
 use btleplug::Error;
 use std::time::Duration;
 use tokio::time;
 use uuid::Uuid;
 use std::collections::BTreeSet;
+
+#[derive(Debug)]
+pub struct CameraInfo {
+    hw_revision: String,
+    fw_revision: String,
+    sw_revision: String,
+    serial_number: String,
+    model_number: String,
+    manufacturer_name: String,
+    wifi_ssid: String,
+    wifi_password: String
+}
+
+async fn get_property(cam: &Peripheral, prop: &str, service: &str) -> String {
+    let ch = Characteristic {
+        uuid: Uuid::parse_str(prop).unwrap(),
+        service_uuid: Uuid::parse_str(service).unwrap(),
+        properties: CharPropFlags::READ,
+        descriptors: BTreeSet::new()
+    };
+    let val = cam
+        .read(&ch)
+        .await
+        .unwrap();
+
+    match String::from_utf8(val) {
+        Ok(val) => val,
+        Err(_) => "not available".to_string()
+    }
+}
+
+async fn get_hw_revision(cam: &Peripheral) -> String {
+    let prop = "00002a27-0000-1000-8000-00805f9b34fb";
+    let service = "0000180a-0000-1000-8000-00805f9b34fb";
+
+    return get_property(&cam, prop, service).await;
+}
+
+async fn get_fw_revision(cam: &Peripheral) -> String {
+    let prop = "00002a26-0000-1000-8000-00805f9b34fb";
+    let service = "0000180a-0000-1000-8000-00805f9b34fb";
+
+    return get_property(&cam, prop, service).await;
+}
+
+async fn get_sw_revision(cam: &Peripheral) -> String {
+    let prop = "00002a28-0000-1000-8000-00805f9b34fb";
+    let service = "0000180a-0000-1000-8000-00805f9b34fb";
+
+    return get_property(&cam, prop, service).await;
+}
+
+async fn get_serial_number(cam: &Peripheral) -> String {
+    let prop = "00002a25-0000-1000-8000-00805f9b34fb";
+    let service = "0000180a-0000-1000-8000-00805f9b34fb";
+
+    return get_property(&cam, prop, service).await;
+}
+
+async fn get_model_number(cam: &Peripheral) -> String {
+    let prop = "00002a24-0000-1000-8000-00805f9b34fb";
+    let service = "0000180a-0000-1000-8000-00805f9b34fb";
+
+    return get_property(&cam, prop, service).await;
+}
+
+async fn get_manufacturer_name(cam: &Peripheral) -> String {
+    let prop = "00002a29-0000-1000-8000-00805f9b34fb";
+    let service = "0000180a-0000-1000-8000-00805f9b34fb";
+
+    return get_property(&cam, prop, service).await;
+}
+
+async fn get_wifi_ssid(cam: &Peripheral) -> String {
+    let prop = "b5f90002-aa8d-11e3-9046-0002a5d5c51b";
+    let service = "b5f90001-aa8d-11e3-9046-0002a5d5c51b";
+
+    return get_property(&cam, prop, service).await;
+}
+
+async fn get_wifi_password(cam: &Peripheral) -> String {
+    let prop = "b5f90003-aa8d-11e3-9046-0002a5d5c51b";
+    let service = "b5f90001-aa8d-11e3-9046-0002a5d5c51b";
+
+    return get_property(&cam, prop, service).await;
+}
 
 pub async fn show_camera_info() -> Result<(), Error> {
     let mgr = Manager::new().await?;
@@ -20,8 +107,6 @@ pub async fn show_camera_info() -> Result<(), Error> {
     time::sleep(Duration::from_secs(2)).await;
 
     let cam = find_camera(&adapter).await.unwrap();
-
-    println!("is connected? {}", cam.is_connected().await?);
 
     if ! cam.is_connected().await? {
         println!("trying to connect...");
@@ -49,76 +134,18 @@ pub async fn show_camera_info() -> Result<(), Error> {
     //    descriptors: BTreeSet::new()
     //};
 
-    // field: vendor data  (wifi password)
-    //let ch = Characteristic {
-    //    uuid: Uuid::parse_str("b5f90003-aa8d-11e3-9046-0002a5d5c51b")?,
-    //    service_uuid: Uuid::parse_str("b5f90001-aa8d-11e3-9046-0002a5d5c51b")?,
-    //    properties: CharPropFlags::READ,
-    //    descriptors: BTreeSet::new()
-    //};
-
-    // field: vendor data  (wifi ssid)
-    let ch = Characteristic {
-        uuid: Uuid::parse_str("b5f90002-aa8d-11e3-9046-0002a5d5c51b")?,
-        service_uuid: Uuid::parse_str("b5f90001-aa8d-11e3-9046-0002a5d5c51b")?,
-        properties: CharPropFlags::READ,
-        descriptors: BTreeSet::new()
+    let info = CameraInfo {
+        hw_revision: get_hw_revision(&cam).await,
+        fw_revision: get_fw_revision(&cam).await,
+        sw_revision: get_sw_revision(&cam).await,
+        serial_number: get_serial_number(&cam).await,
+        model_number: get_model_number(&cam).await,
+        manufacturer_name: get_manufacturer_name(&cam).await,
+        wifi_ssid: get_wifi_ssid(&cam).await,
+        wifi_password: get_wifi_password(&cam).await
     };
 
-    // field: software revision
-    //let ch = Characteristic {
-    //    uuid: Uuid::parse_str("00002a28-0000-1000-8000-00805f9b34fb")?,
-    //    service_uuid: Uuid::parse_str("0000180a-0000-1000-8000-00805f9b34fb")?,
-    //    properties: CharPropFlags::READ,
-    //    descriptors: BTreeSet::new()
-    //};
-
-    // field: firmware revision
-    //let ch = Characteristic {
-    //    uuid: Uuid::parse_str("00002a26-0000-1000-8000-00805f9b34fb")?,
-    //    service_uuid: Uuid::parse_str("0000180a-0000-1000-8000-00805f9b34fb")?,
-    //    properties: CharPropFlags::READ,
-    //    descriptors: BTreeSet::new()
-    //};
-
-    // field: hardware revision
-    //let ch = Characteristic {
-    //    uuid: Uuid::parse_str("00002a27-0000-1000-8000-00805f9b34fb")?,
-    //    service_uuid: Uuid::parse_str("0000180a-0000-1000-8000-00805f9b34fb")?,
-    //    properties: CharPropFlags::READ,
-    //    descriptors: BTreeSet::new()
-    //};
-
-    // field: serial number
-    //let ch = Characteristic {
-    //    uuid: Uuid::parse_str("00002a25-0000-1000-8000-00805f9b34fb")?,
-    //    service_uuid: Uuid::parse_str("0000180a-0000-1000-8000-00805f9b34fb")?,
-    //    properties: CharPropFlags::READ,
-    //    descriptors: BTreeSet::new()
-    //};
-
-    // field: model number
-    //let ch = Characteristic {
-    //    uuid: Uuid::parse_str("00002a24-0000-1000-8000-00805f9b34fb")?,
-    //    service_uuid: Uuid::parse_str("0000180a-0000-1000-8000-00805f9b34fb")?,
-    //    properties: CharPropFlags::READ,
-    //    descriptors: BTreeSet::new()
-    //};
-
-    // field: manufacturer name
-    //let ch = Characteristic {
-    //    uuid: Uuid::parse_str("00002a29-0000-1000-8000-00805f9b34fb")?,
-    //    service_uuid: Uuid::parse_str("0000180a-0000-1000-8000-00805f9b34fb")?,
-    //    properties: CharPropFlags::READ,
-    //    descriptors: BTreeSet::new()
-    //};
-
-    println!("waiting for reply...");
-    let ret = cam.read(&ch).await?;
-    println!("reply received!");
-
-    println!("raw ret = {:?}", ret);
-    println!("ret = {}", String::from_utf8(ret).unwrap());
+    println!("{:?}", info);
 
     //cam.disconnect().await?;
 
