@@ -93,6 +93,37 @@ async fn get_wifi_password(cam: &Peripheral) -> String {
     return get_property(&cam, prop, service).await;
 }
 
+// TODO: return u8
+async fn get_battery_level(cam: &Peripheral) -> String {
+    let prop = "00002a19-0000-1000-8000-00805f9b34fb";
+    let service = "0000180f-0000-1000-8000-00805f9b34fb";
+
+    return get_property(&cam, prop, service).await;
+}
+
+// TODO: return u8
+async fn get_tx_power_level(cam: &Peripheral) -> String {
+    let prop = "00002a07-0000-1000-8000-00805f9b34fb";
+    let service = "00001804-0000-1000-8000-00805f9b34fb";
+
+    return get_property(&cam, prop, service).await;
+}
+
+async fn get_client_characteristic_config(cam: &Peripheral) -> String {
+    let prop = "b5f90005-aa8d-11e3-9046-0002a5d5c51b";
+    let service = "b5f90001-aa8d-11e3-9046-0002a5d5c51b";
+
+    return get_property(&cam, prop, service).await;
+}
+
+// TODO: discover what this value represents
+async fn get_unknown_field(cam: &Peripheral) -> String {
+    let prop = "b5f90006-aa8d-11e3-9046-0002a5d5c51b";
+    let service = "b5f90001-aa8d-11e3-9046-0002a5d5c51b";
+
+    return get_property(&cam, prop, service).await;
+}
+
 pub async fn show_camera_info() -> Result<(), Error> {
     let mgr = Manager::new().await?;
     let adapter = mgr
@@ -126,14 +157,6 @@ pub async fn show_camera_info() -> Result<(), Error> {
     //    }
     //}
 
-    // field: vendor data
-    //let ch = Characteristic {
-    //    uuid: Uuid::parse_str("b5f90006-aa8d-11e3-9046-0002a5d5c51b")?,
-    //    service_uuid: Uuid::parse_str("b5f90001-aa8d-11e3-9046-0002a5d5c51b")?,
-    //    properties: CharPropFlags::READ,
-    //    descriptors: BTreeSet::new()
-    //};
-
     let info = CameraInfo {
         hw_revision: get_hw_revision(&cam).await,
         fw_revision: get_fw_revision(&cam).await,
@@ -144,6 +167,13 @@ pub async fn show_camera_info() -> Result<(), Error> {
         wifi_ssid: get_wifi_ssid(&cam).await,
         wifi_password: get_wifi_password(&cam).await
     };
+
+    // TODO: put all this fields into CameraInfo struct
+    println!("unknown field: {}", get_unknown_field(&cam).await);
+    println!("battery level: {}", get_battery_level(&cam).await);
+    println!("tx power level: {}", get_tx_power_level(&cam).await);
+    println!("client characteristic config: {}",
+             get_client_characteristic_config(&cam).await);
 
     println!("{:?}", info);
 
