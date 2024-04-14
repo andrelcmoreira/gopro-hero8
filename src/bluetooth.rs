@@ -1,11 +1,9 @@
+use std::collections::BTreeSet;
 use btleplug::api::{Central, Manager as _, Peripheral as _, ScanFilter,
                     Characteristic, CharPropFlags};
 use btleplug::platform::{Adapter, Manager, Peripheral};
 use btleplug::Error;
-use std::time::Duration;
-use tokio::time;
 use uuid::Uuid;
-use std::collections::BTreeSet;
 
 #[derive(Debug)]
 pub struct CameraInfo {
@@ -101,7 +99,7 @@ async fn get_battery_level(cam: &Peripheral) -> String {
     return get_property(&cam, prop, service).await;
 }
 
-// TODO: return u8
+// TODO: return i8
 async fn get_tx_power_level(cam: &Peripheral) -> String {
     let prop = "00002a07-0000-1000-8000-00805f9b34fb";
     let service = "00001804-0000-1000-8000-00805f9b34fb";
@@ -135,10 +133,7 @@ pub async fn show_camera_info() -> Result<(), Error> {
 
     adapter.start_scan(ScanFilter::default()).await?;
 
-    time::sleep(Duration::from_secs(2)).await;
-
     let cam = find_camera(&adapter).await.unwrap();
-
     if ! cam.is_connected().await? {
         println!("trying to connect...");
         cam.connect().await?
