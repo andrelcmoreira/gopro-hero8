@@ -1,7 +1,7 @@
 use std::env::args;
 use std::io::Error;
 
-use gp8ctl::camera::get_camera_info;
+use gopro_hero8::camera::get_camera_info;
 
 fn main() -> Result<(), Error> {
     let args = args().collect::<Vec<String>>();
