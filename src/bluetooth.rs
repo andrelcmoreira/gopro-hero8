@@ -5,7 +5,7 @@ use btleplug::platform::{Adapter, Manager, Peripheral};
 use btleplug::Error;
 use uuid::Uuid;
 
-async fn get_property(cam: &Peripheral, prop: &str, service: &str) -> String {
+async fn get_str_prop(cam: &Peripheral, prop: &str, service: &str) -> String {
     let ch = Characteristic {
         uuid: Uuid::parse_str(prop).unwrap(),
         service_uuid: Uuid::parse_str(service).unwrap(),
@@ -17,95 +17,104 @@ async fn get_property(cam: &Peripheral, prop: &str, service: &str) -> String {
         .await
         .unwrap();
 
+    // TODO: improve this
     match String::from_utf8(val) {
         Ok(val) => {
-            if val.len() == 1 {
-                return "NA".to_string()
+            if val != "\0" {
+                val
             } else {
-                return val
+                "".to_string()
             }
         },
-        Err(_) => "NA".to_string()
+        Err(_) => "".to_string()
     }
+}
+
+pub async fn get_int_prop(cam: &Peripheral, prop: &str, service: &str) -> u8 {
+    let val = get_str_prop(&cam, prop, service)
+        .await
+        .chars()
+        .nth(0)
+        .unwrap();
+
+    val as u8
 }
 
 pub async fn get_hw_revision(cam: &Peripheral) -> String {
     let prop = "00002a27-0000-1000-8000-00805f9b34fb";
     let service = "0000180a-0000-1000-8000-00805f9b34fb";
 
-    return get_property(&cam, prop, service).await;
+    return get_str_prop(&cam, prop, service).await
 }
 
 pub async fn get_fw_revision(cam: &Peripheral) -> String {
     let prop = "00002a26-0000-1000-8000-00805f9b34fb";
     let service = "0000180a-0000-1000-8000-00805f9b34fb";
 
-    return get_property(&cam, prop, service).await;
+    return get_str_prop(&cam, prop, service).await
 }
 
 pub async fn get_sw_revision(cam: &Peripheral) -> String {
     let prop = "00002a28-0000-1000-8000-00805f9b34fb";
     let service = "0000180a-0000-1000-8000-00805f9b34fb";
 
-    return get_property(&cam, prop, service).await;
+    return get_str_prop(&cam, prop, service).await
 }
 
 pub async fn get_serial_number(cam: &Peripheral) -> String {
     let prop = "00002a25-0000-1000-8000-00805f9b34fb";
     let service = "0000180a-0000-1000-8000-00805f9b34fb";
 
-    return get_property(&cam, prop, service).await;
+    return get_str_prop(&cam, prop, service).await
 }
 
 pub async fn get_model_number(cam: &Peripheral) -> String {
     let prop = "00002a24-0000-1000-8000-00805f9b34fb";
     let service = "0000180a-0000-1000-8000-00805f9b34fb";
 
-    return get_property(&cam, prop, service).await;
+    return get_str_prop(&cam, prop, service).await
 }
 
 pub async fn get_manufacturer_name(cam: &Peripheral) -> String {
     let prop = "00002a29-0000-1000-8000-00805f9b34fb";
     let service = "0000180a-0000-1000-8000-00805f9b34fb";
 
-    return get_property(&cam, prop, service).await;
+    return get_str_prop(&cam, prop, service).await
 }
 
 pub async fn get_wifi_ssid(cam: &Peripheral) -> String {
     let prop = "b5f90002-aa8d-11e3-9046-0002a5d5c51b";
     let service = "b5f90001-aa8d-11e3-9046-0002a5d5c51b";
 
-    return get_property(&cam, prop, service).await;
+    return get_str_prop(&cam, prop, service).await
 }
 
 pub async fn get_wifi_password(cam: &Peripheral) -> String {
     let prop = "b5f90003-aa8d-11e3-9046-0002a5d5c51b";
     let service = "b5f90001-aa8d-11e3-9046-0002a5d5c51b";
 
-    return get_property(&cam, prop, service).await;
+    return get_str_prop(&cam, prop, service).await
 }
 
-// TODO: return u8
-pub async fn get_battery_level(cam: &Peripheral) -> String {
+pub async fn get_battery_level(cam: &Peripheral) -> u8 {
     let prop = "00002a19-0000-1000-8000-00805f9b34fb";
     let service = "0000180f-0000-1000-8000-00805f9b34fb";
 
-    return get_property(&cam, prop, service).await;
+    return get_int_prop(&cam, prop, service).await
 }
 
-// TODO: return i8
-pub async fn get_tx_power_level(cam: &Peripheral) -> String {
+pub async fn get_tx_power_level(cam: &Peripheral) -> u8 {
     let prop = "00002a07-0000-1000-8000-00805f9b34fb";
     let service = "00001804-0000-1000-8000-00805f9b34fb";
 
-    return get_property(&cam, prop, service).await;
+    return get_int_prop(&cam, prop, service).await
 }
 
 pub async fn get_characteristic_cfg(cam: &Peripheral) -> String {
     let prop = "b5f90005-aa8d-11e3-9046-0002a5d5c51b";
     let service = "b5f90001-aa8d-11e3-9046-0002a5d5c51b";
 
-    return get_property(&cam, prop, service).await;
+    return get_str_prop(&cam, prop, service).await;
 }
 
 // TODO: discover what this value represents
@@ -113,7 +122,7 @@ pub async fn get_unknown_field(cam: &Peripheral) -> String {
     let prop = "b5f90006-aa8d-11e3-9046-0002a5d5c51b";
     let service = "b5f90001-aa8d-11e3-9046-0002a5d5c51b";
 
-    return get_property(&cam, prop, service).await;
+    return get_str_prop(&cam, prop, service).await;
 }
 
 pub async fn get_bt_adapter() -> Result<Adapter, Error> {

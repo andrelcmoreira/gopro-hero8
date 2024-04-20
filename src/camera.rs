@@ -12,13 +12,12 @@ pub struct CameraInfo {
     manufacturer_name: String,
     wifi_ssid: String,
     wifi_password: String,
-    battery_level: String,
-    tx_power_level: String,
+    battery_level: u8,
+    tx_power_level: u8,
     characteristic_cfg: String,
     unknown_field: String // TODO: rename it
 }
 
-// TODO: handle errors
 pub fn get_camera_info() -> Result<CameraInfo, Error> {
     Runtime::new()
         .unwrap()
