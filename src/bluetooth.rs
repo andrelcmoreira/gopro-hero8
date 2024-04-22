@@ -155,21 +155,6 @@ pub async fn connect_to_cam(adapter: &Adapter) -> Result<Peripheral, Error> {
     Ok(cam)
 }
 
-pub async fn show_camera_info() -> Result<(), Error> {
-    //for s in cam.services() {
-    //    println!(
-    //        "Service UUID {}, primary: {}",
-    //        s.uuid, s.primary
-    //    );
-    //    for characteristic in s.characteristics {
-    //        println!("{:?}", characteristic);
-    //    }
-    //}
-
-    //cam.disconnect().await?;
-    Ok(())
-}
-
 async fn find_camera(adapter: &Adapter) -> Option<Peripheral> {
     let devices = adapter
         .peripherals()

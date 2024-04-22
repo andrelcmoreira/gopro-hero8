@@ -1,7 +1,7 @@
 use std::env::args;
 use std::io::Error;
 
-use gopro_hero8::camera::get_camera_info;
+use gopro_hero8::camera::*;
 
 fn main() -> Result<(), Error> {
     let args = args().collect::<Vec<String>>();
@@ -14,7 +14,9 @@ fn main() -> Result<(), Error> {
 
         match cmd.as_str() {
             "--show-camera-info" => {
-                println!("{:?}", get_camera_info()?)
+                println!("{:?}", get_cam_factory_info()?);
+                println!("{:?}", get_cam_wifi_info()?);
+                println!("{:?}", get_cam_status_info()?)
             },
             _ => println!("command not available")
         }
