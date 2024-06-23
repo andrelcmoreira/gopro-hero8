@@ -2,10 +2,10 @@ use std::io::Error;
 
 use tokio::runtime::Runtime;
 
+use crate::command::asynchronous as _async;
 use crate::data::factory_info::FactoryInfo;
 use crate::data::status_info::StatusInfo;
 use crate::data::wifi_info::WifiInfo;
-use crate::command::asynchronous as _async;
 
 pub fn get_factory_info() -> Result<FactoryInfo, Error> {
     Runtime::new()

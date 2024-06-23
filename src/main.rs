@@ -1,10 +1,14 @@
 use std::env::args;
 use std::io::Error;
 
+use log::{info, error};
+
 use gopro_hero8::command::synchronous::*;
 
 fn main() -> Result<(), Error> {
     let args = args().collect::<Vec<String>>();
+
+    env_logger::init();
 
     if args.len() > 1 {
         let cmd = args
@@ -14,11 +18,11 @@ fn main() -> Result<(), Error> {
 
         match cmd.as_str() {
             "--show-camera-info" => {
-                println!("{:?}", get_factory_info()?);
-                println!("{:?}", get_wifi_info()?);
-                println!("{:?}", get_status_info()?)
+                info!("{:?}", get_factory_info()?);
+                info!("{:?}", get_wifi_info()?);
+                info!("{:?}", get_status_info()?)
             },
-            _ => println!("command not available")
+            _ => error!("command not available")
         }
     }
 

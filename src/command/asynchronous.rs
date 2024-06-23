@@ -8,7 +8,7 @@ use crate::data::wifi_info::WifiInfo;
 
 // TODO: handle errors
 pub async fn get_wifi_info() -> Result<WifiInfo, Error> {
-    let adapter = get_bt_adapter()
+    let adapter = get_adapter()
         .await
         .unwrap();
     let cam = connect_to_cam(&adapter)
@@ -24,7 +24,7 @@ pub async fn get_wifi_info() -> Result<WifiInfo, Error> {
 
 // TODO: handle errors
 pub async fn get_factory_info() -> Result<FactoryInfo, Error> {
-    let adapter = get_bt_adapter()
+    let adapter = get_adapter()
         .await
         .unwrap();
     let cam = connect_to_cam(&adapter)
@@ -44,7 +44,7 @@ pub async fn get_factory_info() -> Result<FactoryInfo, Error> {
 
 // TODO: handle errors
 pub async fn get_status_info() -> Result<StatusInfo, Error> {
-    let adapter = get_bt_adapter()
+    let adapter = get_adapter()
         .await
         .unwrap();
     let cam = connect_to_cam(&adapter)
