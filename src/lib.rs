@@ -1,4 +1,3 @@
-pub mod bluetooth;
-pub mod wifi;
+pub mod api;
 pub mod camera;
 pub mod data;
