@@ -14,9 +14,9 @@ fn main() -> Result<(), Error> {
 
         match cmd.as_str() {
             "--show-camera-info" => {
-                println!("{:?}", get_cam_factory_info()?);
-                println!("{:?}", get_cam_wifi_info()?);
-                println!("{:?}", get_cam_status_info()?)
+                println!("{:?}", get_factory_info()?);
+                println!("{:?}", get_wifi_info()?);
+                println!("{:?}", get_status_info()?)
             },
             _ => println!("command not available")
         }

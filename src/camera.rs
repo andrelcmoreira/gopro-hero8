@@ -2,36 +2,16 @@ use std::io::Error;
 use tokio::runtime::Runtime;
 use crate::bluetooth::*;
 
-#[derive(Debug)]
-pub struct CamWifiInfo {
-    wifi_ssid: String,
-    wifi_password: String,
-}
+use crate::data::factory_info::FactoryInfo;
+use crate::data::status_info::StatusInfo;
+use crate::data::wifi_info::WifiInfo;
 
-#[derive(Debug)]
-pub struct CamStatusInfo {
-    battery_level: u8,
-    tx_power_level: u8,
-//    characteristic_cfg: String,
-//    unknown_field: String // TODO: rename it
-}
-
-#[derive(Debug)]
-pub struct CamFactoryInfo {
-    hw_revision: String,
-    fw_revision: String,
-    sw_revision: String,
-    serial_number: String,
-    model_number: String,
-    manufacturer_name: String,
-}
-
-pub fn get_cam_factory_info() -> Result<CamFactoryInfo, Error> {
+pub fn get_factory_info() -> Result<FactoryInfo, Error> {
     Runtime::new()
         .unwrap()
         .block_on(
             async {
-                let info = get_cam_factory_info_async()
+                let info = get_factory_info_async()
                     .await?;
 
                 Ok(info)
@@ -39,12 +19,12 @@ pub fn get_cam_factory_info() -> Result<CamFactoryInfo, Error> {
         )
 }
 
-pub fn get_cam_wifi_info() -> Result<CamWifiInfo, Error> {
+pub fn get_wifi_info() -> Result<WifiInfo, Error> {
     Runtime::new()
         .unwrap()
         .block_on(
             async {
-                let info = get_cam_wifi_info_async()
+                let info = get_wifi_info_async()
                     .await?;
 
                 Ok(info)
@@ -52,12 +32,12 @@ pub fn get_cam_wifi_info() -> Result<CamWifiInfo, Error> {
         )
 }
 
-pub fn get_cam_status_info() -> Result<CamStatusInfo, Error> {
+pub fn get_status_info() -> Result<StatusInfo, Error> {
     Runtime::new()
         .unwrap()
         .block_on(
             async {
-                let info = get_cam_status_info_async()
+                let info = get_status_info_async()
                     .await?;
 
                 Ok(info)
@@ -66,14 +46,14 @@ pub fn get_cam_status_info() -> Result<CamStatusInfo, Error> {
 }
 
 // TODO: handle errors
-pub async fn get_cam_wifi_info_async() -> Result<CamWifiInfo, Error> {
+pub async fn get_wifi_info_async() -> Result<WifiInfo, Error> {
     let adapter = get_bt_adapter()
         .await
         .unwrap();
     let cam = connect_to_cam(&adapter)
         .await
         .unwrap();
-    let info = CamWifiInfo {
+    let info = WifiInfo {
         wifi_ssid: get_wifi_ssid(&cam).await,
         wifi_password: get_wifi_password(&cam).await
     };
@@ -82,14 +62,14 @@ pub async fn get_cam_wifi_info_async() -> Result<CamWifiInfo, Error> {
 }
 
 // TODO: handle errors
-pub async fn get_cam_factory_info_async() -> Result<CamFactoryInfo, Error> {
+pub async fn get_factory_info_async() -> Result<FactoryInfo, Error> {
     let adapter = get_bt_adapter()
         .await
         .unwrap();
     let cam = connect_to_cam(&adapter)
         .await
         .unwrap();
-    let info = CamFactoryInfo {
+    let info = FactoryInfo {
         hw_revision: get_hw_revision(&cam).await,
         fw_revision: get_fw_revision(&cam).await,
         sw_revision: get_sw_revision(&cam).await,
@@ -102,14 +82,14 @@ pub async fn get_cam_factory_info_async() -> Result<CamFactoryInfo, Error> {
 }
 
 // TODO: handle errors
-pub async fn get_cam_status_info_async() -> Result<CamStatusInfo, Error> {
+pub async fn get_status_info_async() -> Result<StatusInfo, Error> {
     let adapter = get_bt_adapter()
         .await
         .unwrap();
     let cam = connect_to_cam(&adapter)
         .await
         .unwrap();
-    let info = CamStatusInfo {
+    let info = StatusInfo {
         battery_level: get_battery_level(&cam).await,
         tx_power_level: get_tx_power_level(&cam).await
     };
