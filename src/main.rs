@@ -1,7 +1,7 @@
 use std::env::args;
 use std::io::Error;
 
-use gopro_hero8::camera::*;
+use gopro_hero8::command::synchronous::*;
 
 fn main() -> Result<(), Error> {
     let args = args().collect::<Vec<String>>();

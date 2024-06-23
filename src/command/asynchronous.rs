@@ -1,53 +1,13 @@
 use std::io::Error;
 
-use tokio::runtime::Runtime;
-
 use crate::api::bluetooth::*;
+
 use crate::data::factory_info::FactoryInfo;
 use crate::data::status_info::StatusInfo;
 use crate::data::wifi_info::WifiInfo;
 
-pub fn get_factory_info() -> Result<FactoryInfo, Error> {
-    Runtime::new()
-        .unwrap()
-        .block_on(
-            async {
-                let info = get_factory_info_async()
-                    .await?;
-
-                Ok(info)
-            }
-        )
-}
-
-pub fn get_wifi_info() -> Result<WifiInfo, Error> {
-    Runtime::new()
-        .unwrap()
-        .block_on(
-            async {
-                let info = get_wifi_info_async()
-                    .await?;
-
-                Ok(info)
-            }
-        )
-}
-
-pub fn get_status_info() -> Result<StatusInfo, Error> {
-    Runtime::new()
-        .unwrap()
-        .block_on(
-            async {
-                let info = get_status_info_async()
-                    .await?;
-
-                Ok(info)
-            }
-        )
-}
-
 // TODO: handle errors
-pub async fn get_wifi_info_async() -> Result<WifiInfo, Error> {
+pub async fn get_wifi_info() -> Result<WifiInfo, Error> {
     let adapter = get_bt_adapter()
         .await
         .unwrap();
@@ -63,7 +23,7 @@ pub async fn get_wifi_info_async() -> Result<WifiInfo, Error> {
 }
 
 // TODO: handle errors
-pub async fn get_factory_info_async() -> Result<FactoryInfo, Error> {
+pub async fn get_factory_info() -> Result<FactoryInfo, Error> {
     let adapter = get_bt_adapter()
         .await
         .unwrap();
@@ -83,7 +43,7 @@ pub async fn get_factory_info_async() -> Result<FactoryInfo, Error> {
 }
 
 // TODO: handle errors
-pub async fn get_status_info_async() -> Result<StatusInfo, Error> {
+pub async fn get_status_info() -> Result<StatusInfo, Error> {
     let adapter = get_bt_adapter()
         .await
         .unwrap();
