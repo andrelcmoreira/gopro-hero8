@@ -3,7 +3,7 @@ use std::io::Error;
 
 use log::{info, error};
 
-use gopro_hero8::command::synchronous::*;
+use gopro_hero8::command::synchronous as sync;
 
 fn main() -> Result<(), Error> {
     let args = args().collect::<Vec<String>>();
@@ -18,9 +18,9 @@ fn main() -> Result<(), Error> {
 
         match cmd.as_str() {
             "--show-camera-info" => {
-                info!("{:?}", get_factory_info()?);
-                info!("{:?}", get_wifi_info()?);
-                info!("{:?}", get_status_info()?)
+                info!("{:?}", sync::get_factory_info()?);
+                info!("{:?}", sync::get_wifi_info()?);
+                info!("{:?}", sync::get_status_info()?)
             },
             _ => error!("command not available")
         }

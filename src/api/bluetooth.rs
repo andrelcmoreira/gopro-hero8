@@ -37,8 +37,7 @@ pub async fn get_int_prop(cam: &Peripheral, prop: &str, service: &str) -> u8 {
         .await
         .chars()
         .nth(0)
-        .unwrap()
-        as u8
+        .unwrap() as u8
 }
 
 pub async fn get_hw_revision(cam: &Peripheral) -> String {
