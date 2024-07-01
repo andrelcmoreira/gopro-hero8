@@ -1,7 +1,7 @@
 use std::env::args;
 use std::io::Error;
 
-use log::{info, error};
+use log::{debug, error, info};
 
 use gopro_hero8::command::synchronous as sync;
 
@@ -15,6 +15,8 @@ fn main() -> Result<(), Error> {
             .into_iter()
             .nth(1)
             .unwrap();
+
+        debug!("command: {}", cmd);
 
         match cmd.as_str() {
             "--show-camera-info" => {

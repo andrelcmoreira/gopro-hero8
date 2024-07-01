@@ -1,4 +1,5 @@
 use std::collections::BTreeSet;
+use std::io::Read;
 
 use btleplug::api::{Central, Manager as _, Peripheral as _, ScanFilter,
                     Characteristic, CharPropFlags};
@@ -18,6 +19,8 @@ async fn get_str_prop(cam: &Peripheral, prop: &str, service: &str) -> String {
         .read(&ch)
         .await
         .unwrap();
+
+    debug!("raw property: {:?}", val.bytes());
 
     // TODO: improve this
     match String::from_utf8(val) {
@@ -177,18 +180,19 @@ async fn find_camera(adapter: &Adapter) -> Option<Peripheral> {
         .await
         .unwrap();
 
-    for dev in devices {
-        let is_gopro = dev
+    for entry in devices {
+        let dev = entry
             .properties()
             .await
             .unwrap()
             .unwrap()
             .local_name
-            .unwrap()
-            .contains("GoPro");
+            .unwrap();
 
-        if is_gopro {
-            return Some(dev)
+        debug!("device: {}", dev);
+
+        if dev.contains("GoPro") {
+            return Some(entry)
         }
     }
 
