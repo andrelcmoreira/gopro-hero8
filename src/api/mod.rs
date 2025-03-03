@@ -1,2 +1,2 @@
-pub mod bluetooth;
-pub mod wifi;
+pub mod asynchronous;
+pub mod synchronous;

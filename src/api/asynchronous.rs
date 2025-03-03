@@ -1,6 +1,6 @@
 use std::io::Error;
 
-use crate::api::bluetooth::*;
+use crate::protocol::bluetooth::*;
 
 use crate::data::factory_info::FactoryInfo;
 use crate::data::status_info::StatusInfo;

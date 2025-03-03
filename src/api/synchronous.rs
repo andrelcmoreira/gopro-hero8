@@ -2,7 +2,7 @@ use std::io::Error;
 
 use tokio::runtime::Runtime;
 
-use crate::command::asynchronous as _async;
+use crate::api::asynchronous as _async;
 use crate::data::factory_info::FactoryInfo;
 use crate::data::status_info::StatusInfo;
 use crate::data::wifi_info::WifiInfo;
