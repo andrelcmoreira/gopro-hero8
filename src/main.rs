@@ -20,9 +20,12 @@ fn main() -> Result<(), Error> {
 
         match cmd.as_str() {
             "--show-camera-info" => {
-                info!("{:?}", sync::get_factory_info()?);
-                info!("{:?}", sync::get_wifi_info()?);
-                info!("{:?}", sync::get_status_info()?)
+                match sync::get_factory_info() {
+                    Ok(data) => info!("{data:?}"),
+                    Err(err) => error!("{}", err.to_string())
+                };
+                //info!("{:?}", sync::get_wifi_info()?);
+                //info!("{:?}", sync::get_status_info()?)
             },
             _ => error!("command not available")
         }
