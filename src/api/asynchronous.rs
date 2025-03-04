@@ -1,12 +1,12 @@
-use std::io::Error;
 
+use crate::error::AppError;
 use crate::protocol::bluetooth::*;
 
 use crate::data::factory_info::FactoryInfo;
 use crate::data::status_info::StatusInfo;
 use crate::data::wifi_info::WifiInfo;
 
-pub async fn get_wifi_info() -> Result<WifiInfo, Error> {
+pub async fn get_wifi_info() -> Result<WifiInfo, AppError> {
     let adapter = get_adapter().await?;
     let cam = connect_to_cam(&adapter).await?;
     let info = WifiInfo::new(
@@ -17,7 +17,7 @@ pub async fn get_wifi_info() -> Result<WifiInfo, Error> {
     Ok(info)
 }
 
-pub async fn get_factory_info() -> Result<FactoryInfo, Error> {
+pub async fn get_factory_info() -> Result<FactoryInfo, AppError> {
     let adapter = get_adapter().await?;
     let cam = connect_to_cam(&adapter).await?;
     let info = FactoryInfo::new(
@@ -32,7 +32,7 @@ pub async fn get_factory_info() -> Result<FactoryInfo, Error> {
     Ok(info)
 }
 
-pub async fn get_status_info() -> Result<StatusInfo, Error> {
+pub async fn get_status_info() -> Result<StatusInfo, AppError> {
     let adapter = get_adapter().await?;
     let cam = connect_to_cam(&adapter).await?;
     let info = StatusInfo::new(

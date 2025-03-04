@@ -24,8 +24,14 @@ fn main() -> Result<(), Error> {
                     Ok(data) => info!("{data:?}"),
                     Err(err) => error!("{}", err.to_string())
                 };
-                //info!("{:?}", sync::get_wifi_info()?);
-                //info!("{:?}", sync::get_status_info()?)
+                match sync::get_wifi_info() {
+                    Ok(data) => info!("{data:?}"),
+                    Err(err) => error!("{}", err.to_string())
+                };
+                match sync::get_status_info() {
+                    Ok(data) => info!("{data:?}"),
+                    Err(err) => error!("{}", err.to_string())
+                };
             },
             _ => error!("command not available")
         }

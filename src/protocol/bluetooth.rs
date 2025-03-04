@@ -1,5 +1,5 @@
 use std::collections::BTreeSet;
-use std::io::{Error, ErrorKind, Read};
+use std::io::Read;
 
 use btleplug::api::{Central, Manager as _, Peripheral as _, ScanFilter,
                     Characteristic, CharPropFlags};
@@ -7,8 +7,8 @@ use btleplug::platform::{Adapter, Manager, Peripheral};
 use log::{info, debug};
 use uuid::Uuid;
 
-/// TODO: handle errors properly. convert the btleplug::Error like to the error
-/// mapping of the library
+use crate::error::AppError;
+
 async fn get_str_prop(cam: &Peripheral, prop: &str, service: &str) -> String {
     let ch = Characteristic {
         uuid: Uuid::parse_str(prop).unwrap(),
@@ -19,7 +19,7 @@ async fn get_str_prop(cam: &Peripheral, prop: &str, service: &str) -> String {
     let val = cam
         .read(&ch)
         .await
-        .unwrap();
+        .unwrap_or(vec![]);
 
     debug!("raw property: {:?}", val.bytes());
 
@@ -36,12 +36,12 @@ async fn get_str_prop(cam: &Peripheral, prop: &str, service: &str) -> String {
     }
 }
 
-pub async fn get_int_prop(cam: &Peripheral, prop: &str, service: &str) -> u8 {
+async fn get_int_prop(cam: &Peripheral, prop: &str, service: &str) -> u8 {
     get_str_prop(&cam, prop, service)
         .await
         .chars()
         .nth(0)
-        .unwrap() as u8
+        .unwrap_or('0') as u8
 }
 
 /// TODO: maybe separate this function to a separate module
@@ -155,16 +155,15 @@ pub async fn get_unknown_field(cam: &Peripheral) -> String {
 
 /// TODO: handle errors properly. convert the btleplug::Error like to the error
 /// mapping of the library
-pub async fn get_adapter() -> Result<Adapter, Error> {
+/// TODO: look for a more idiomatic way to handle these errors
+pub async fn get_adapter() -> Result<Adapter, AppError> {
     let mgr = match Manager::new().await {
         Ok(m) => m,
-        Err(_) =>
-            return Err(Error::new(ErrorKind::NotFound, "Bluetooth adapter not found!"))
+        Err(_) => return Err(AppError::BluetoothNotAvailable)
     };
     let adapter = match mgr.adapters().await {
         Ok(adap) => adap.into_iter().nth(0).unwrap(),
-        Err(_) =>
-            return Err(Error::new(ErrorKind::NotFound, "Bluetooth adapter not found!"))
+        Err(_) => return Err(AppError::BluetoothNotAvailable)
     };
 
     Ok(adapter)
@@ -172,19 +171,21 @@ pub async fn get_adapter() -> Result<Adapter, Error> {
 
 /// TODO: handle errors properly. convert the btleplug::Error like to the error
 /// mapping of the library
-pub async fn connect_to_cam(adapter: &Adapter) -> Result<Peripheral, Error> {
-    adapter.start_scan(ScanFilter::default())
-        .await
-        .unwrap();
+pub async fn connect_to_cam(adapter: &Adapter) -> Result<Peripheral, AppError> {
+    if adapter.start_scan(ScanFilter::default()).await.is_err() {
+        return Err(AppError::ScanError)
+    }
 
-    let cam = find_camera(&adapter)
-        .await
-        .unwrap();
+    let cam = match find_camera(&adapter).await {
+        Some(c) => c,
+        None => return Err(AppError::CameraNotFound)
+    };
+
     if ! cam.is_connected().await.unwrap() {
-        info!("trying to connect...");
-        cam.connect()
-            .await
-            .unwrap()
+        info!("trying to connect to the camera...");
+        if cam.connect().await.is_err() {
+            return Err(AppError::ConnectionFailure)
+        }
     }
 
     debug!("is connected? {}", cam.is_connected().await.unwrap());
@@ -202,7 +203,7 @@ async fn find_camera(adapter: &Adapter) -> Option<Peripheral> {
     let devices = adapter
         .peripherals()
         .await
-        .unwrap();
+        .unwrap_or(vec![]);
 
     for entry in devices {
         let dev = entry

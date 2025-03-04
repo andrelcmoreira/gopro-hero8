@@ -1,13 +1,12 @@
-use std::io::Error;
-
 use tokio::runtime::Runtime;
 
 use crate::api::asynchronous as _async;
 use crate::data::factory_info::FactoryInfo;
 use crate::data::status_info::StatusInfo;
 use crate::data::wifi_info::WifiInfo;
+use crate::error::AppError;
 
-pub fn get_factory_info() -> Result<FactoryInfo, Error> {
+pub fn get_factory_info() -> Result<FactoryInfo, AppError> {
     Runtime::new()
         .unwrap()
         .block_on(
@@ -20,7 +19,7 @@ pub fn get_factory_info() -> Result<FactoryInfo, Error> {
         )
 }
 
-pub fn get_wifi_info() -> Result<WifiInfo, Error> {
+pub fn get_wifi_info() -> Result<WifiInfo, AppError> {
     Runtime::new()
         .unwrap()
         .block_on(
@@ -33,7 +32,7 @@ pub fn get_wifi_info() -> Result<WifiInfo, Error> {
         )
 }
 
-pub fn get_status_info() -> Result<StatusInfo, Error> {
+pub fn get_status_info() -> Result<StatusInfo, AppError> {
     Runtime::new()
         .unwrap()
         .block_on(
