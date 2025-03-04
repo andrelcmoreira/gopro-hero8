@@ -44,7 +44,7 @@ async fn get_int_prop(cam: &Peripheral, prop: &str, service: &str) -> u8 {
         .unwrap_or('0') as u8
 }
 
-/// TODO: maybe separate this function to a separate module
+// TODO: maybe separate this function to a separate module
 pub async fn get_hw_revision(cam: &Peripheral) -> String {
     const PROP: &str = "00002a27-0000-1000-8000-00805f9b34fb";
     const SERVICE: &str = "0000180a-0000-1000-8000-00805f9b34fb";
@@ -53,7 +53,7 @@ pub async fn get_hw_revision(cam: &Peripheral) -> String {
         .await
 }
 
-/// TODO: maybe separate this function to a separate module
+// TODO: maybe separate this function to a separate module
 pub async fn get_fw_revision(cam: &Peripheral) -> String {
     const PROP: &str = "00002a26-0000-1000-8000-00805f9b34fb";
     const SERVICE: &str = "0000180a-0000-1000-8000-00805f9b34fb";
@@ -62,7 +62,7 @@ pub async fn get_fw_revision(cam: &Peripheral) -> String {
         .await
 }
 
-/// TODO: maybe separate this function to a separate module
+// TODO: maybe separate this function to a separate module
 pub async fn get_sw_revision(cam: &Peripheral) -> String {
     const PROP: &str = "00002a28-0000-1000-8000-00805f9b34fb";
     const SERVICE: &str = "0000180a-0000-1000-8000-00805f9b34fb";
@@ -71,7 +71,7 @@ pub async fn get_sw_revision(cam: &Peripheral) -> String {
         .await
 }
 
-/// TODO: maybe separate this function to a separate module
+// TODO: maybe separate this function to a separate module
 pub async fn get_serial_number(cam: &Peripheral) -> String {
     const PROP: &str = "00002a25-0000-1000-8000-00805f9b34fb";
     const SERVICE: &str = "0000180a-0000-1000-8000-00805f9b34fb";
@@ -80,7 +80,7 @@ pub async fn get_serial_number(cam: &Peripheral) -> String {
         .await
 }
 
-/// TODO: maybe separate this function to a separate module
+// TODO: maybe separate this function to a separate module
 pub async fn get_model_number(cam: &Peripheral) -> String {
     const PROP: &str = "00002a24-0000-1000-8000-00805f9b34fb";
     const SERVICE: &str = "0000180a-0000-1000-8000-00805f9b34fb";
@@ -89,7 +89,7 @@ pub async fn get_model_number(cam: &Peripheral) -> String {
         .await
 }
 
-/// TODO: maybe separate this function to a separate module
+// TODO: maybe separate this function to a separate module
 pub async fn get_manufacturer_name(cam: &Peripheral) -> String {
     const PROP: &str = "00002a29-0000-1000-8000-00805f9b34fb";
     const SERVICE: &str = "0000180a-0000-1000-8000-00805f9b34fb";
@@ -98,7 +98,7 @@ pub async fn get_manufacturer_name(cam: &Peripheral) -> String {
         .await
 }
 
-/// TODO: maybe separate this function to a separate module
+// TODO: maybe separate this function to a separate module
 pub async fn get_wifi_ssid(cam: &Peripheral) -> String {
     const PROP: &str = "b5f90002-aa8d-11e3-9046-0002a5d5c51b";
     const SERVICE: &str = "b5f90001-aa8d-11e3-9046-0002a5d5c51b";
@@ -107,7 +107,7 @@ pub async fn get_wifi_ssid(cam: &Peripheral) -> String {
         .await
 }
 
-/// TODO: maybe separate this function to a separate module
+// TODO: maybe separate this function to a separate module
 pub async fn get_wifi_password(cam: &Peripheral) -> String {
     const PROP: &str = "b5f90003-aa8d-11e3-9046-0002a5d5c51b";
     const SERVICE: &str = "b5f90001-aa8d-11e3-9046-0002a5d5c51b";
@@ -116,7 +116,7 @@ pub async fn get_wifi_password(cam: &Peripheral) -> String {
         .await
 }
 
-/// TODO: maybe separate this function to a separate module
+// TODO: maybe separate this function to a separate module
 pub async fn get_battery_level(cam: &Peripheral) -> u8 {
     const PROP: &str = "00002a19-0000-1000-8000-00805f9b34fb";
     const SERVICE: &str = "0000180f-0000-1000-8000-00805f9b34fb";
@@ -125,7 +125,7 @@ pub async fn get_battery_level(cam: &Peripheral) -> u8 {
         .await
 }
 
-/// TODO: maybe separate this function to a separate module
+// TODO: maybe separate this function to a separate module
 pub async fn get_tx_power_level(cam: &Peripheral) -> u8 {
     const PROP: &str = "00002a07-0000-1000-8000-00805f9b34fb";
     const SERVICE: &str = "00001804-0000-1000-8000-00805f9b34fb";
@@ -134,7 +134,7 @@ pub async fn get_tx_power_level(cam: &Peripheral) -> u8 {
         .await
 }
 
-/// TODO: maybe separate this function to a separate module
+// TODO: maybe separate this function to a separate module
 pub async fn get_characteristic_cfg(cam: &Peripheral) -> String {
     const PROP: &str = "b5f90005-aa8d-11e3-9046-0002a5d5c51b";
     const SERVICE: &str = "b5f90001-aa8d-11e3-9046-0002a5d5c51b";
@@ -143,8 +143,8 @@ pub async fn get_characteristic_cfg(cam: &Peripheral) -> String {
         .await
 }
 
-/// TODO: discover what this value represents
-/// TODO: maybe separate this function to a separate module
+// TODO: discover what this value represents
+// TODO: maybe separate this function to a separate module
 pub async fn get_unknown_field(cam: &Peripheral) -> String {
     const PROP: &str = "b5f90006-aa8d-11e3-9046-0002a5d5c51b";
     const SERVICE: &str = "b5f90001-aa8d-11e3-9046-0002a5d5c51b";
@@ -153,9 +153,7 @@ pub async fn get_unknown_field(cam: &Peripheral) -> String {
         .await
 }
 
-/// TODO: handle errors properly. convert the btleplug::Error like to the error
-/// mapping of the library
-/// TODO: look for a more idiomatic way to handle these errors
+// TODO: look for a more idiomatic way to handle these errors
 pub async fn get_adapter() -> Result<Adapter, AppError> {
     let mgr = match Manager::new().await {
         Ok(m) => m,
@@ -169,11 +167,10 @@ pub async fn get_adapter() -> Result<Adapter, AppError> {
     Ok(adapter)
 }
 
-/// TODO: handle errors properly. convert the btleplug::Error like to the error
-/// mapping of the library
+// TODO: look for a more idiomatic way to handle these errors
 pub async fn connect_to_cam(adapter: &Adapter) -> Result<Peripheral, AppError> {
     if adapter.start_scan(ScanFilter::default()).await.is_err() {
-        return Err(AppError::ScanError)
+        return Err(AppError::DeviceLookupError)
     }
 
     let cam = match find_camera(&adapter).await {
@@ -190,6 +187,7 @@ pub async fn connect_to_cam(adapter: &Adapter) -> Result<Peripheral, AppError> {
 
     debug!("is connected? {}", cam.is_connected().await.unwrap());
 
+    // TODO: handle error
     cam.discover_services()
         .await
         .unwrap();
@@ -197,8 +195,7 @@ pub async fn connect_to_cam(adapter: &Adapter) -> Result<Peripheral, AppError> {
     Ok(cam)
 }
 
-/// TODO: handle errors properly. convert the btleplug::Error like to the error
-/// mapping of the library
+// TODO: look for a more idiomatic way to handle these errors
 async fn find_camera(adapter: &Adapter) -> Option<Peripheral> {
     let devices = adapter
         .peripherals()
@@ -206,18 +203,22 @@ async fn find_camera(adapter: &Adapter) -> Option<Peripheral> {
         .unwrap_or(vec![]);
 
     for entry in devices {
-        let dev = entry
+        let peripheral = entry
             .properties()
             .await
-            .unwrap()
-            .unwrap()
-            .local_name
             .unwrap();
 
-        debug!("device: {}", dev);
+        if peripheral.is_some() {
+            let dev = peripheral
+                .unwrap()
+                .local_name
+                .unwrap_or("".to_string());
 
-        if dev.contains("GoPro") {
-            return Some(entry)
+            debug!("device: {}", dev);
+
+            if ! dev.is_empty() && dev.contains("GoPro") {
+                return Some(entry)
+            }
         }
     }
 

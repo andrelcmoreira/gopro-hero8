@@ -1,2 +1,2 @@
-pub mod bluetooth;
+pub mod ble;
 pub mod wifi;

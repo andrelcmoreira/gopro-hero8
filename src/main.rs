@@ -3,7 +3,7 @@ use std::io::Error;
 
 use log::{debug, error, info};
 
-use gopro_hero8::api::synchronous as sync;
+use hero8::api::synchronous as sync;
 
 fn main() -> Result<(), Error> {
     let args = args().collect::<Vec<String>>();

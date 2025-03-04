@@ -6,8 +6,8 @@ pub enum AppError {
     BluetoothNotAvailable,
     #[error("The camera was not found")]
     CameraNotFound,
-    #[error("Fail to connect to the camera")]
+    #[error("Failed to connect to the camera")]
     ConnectionFailure,
-    #[error("Fail to scan for devices")]
-    ScanError
+    #[error("Failed to lookup for devices")]
+    DeviceLookupError
 }
