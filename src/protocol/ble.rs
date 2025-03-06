@@ -16,8 +16,7 @@ async fn get_str_prop(cam: &Peripheral, prop: &str, service: &str) -> String {
         properties: CharPropFlags::READ,
         descriptors: BTreeSet::new()
     };
-    let val = cam
-        .read(&ch)
+    let val = cam.read(&ch)
         .await
         .unwrap_or(vec![]);
 
@@ -153,23 +152,22 @@ pub async fn get_unknown_field(cam: &Peripheral) -> String {
         .await
 }
 
-// TODO: look for a more idiomatic way to handle these errors
 pub async fn get_adapter() -> Result<Adapter, AppError> {
-    let mgr = match Manager::new().await {
-        Ok(m) => m,
-        Err(_) => return Err(AppError::BluetoothNotAvailable)
-    };
-    let adapter = match mgr.adapters().await {
-        Ok(adap) => adap.into_iter().nth(0).unwrap(),
-        Err(_) => return Err(AppError::BluetoothNotAvailable)
-    };
+    let mgr = Manager::new()
+        .await
+        .map_err(|_| AppError::BluetoothNotAvailable);
+    let adapter = mgr?.adapters()
+        .await
+        .map_err(|_| AppError::BluetoothNotAvailable)
+        ?.into_iter()
+        .nth(0)
+        .unwrap();
 
     Ok(adapter)
 }
 
-// TODO: look for a more idiomatic way to handle these errors
 pub async fn connect_to_cam(adapter: &Adapter) -> Result<Peripheral, AppError> {
-    if adapter.start_scan(ScanFilter::default()).await.is_err() {
+    if let Err(_) = adapter.start_scan(ScanFilter::default()).await {
         return Err(AppError::DeviceLookupError)
     }
 
@@ -178,43 +176,40 @@ pub async fn connect_to_cam(adapter: &Adapter) -> Result<Peripheral, AppError> {
         None => return Err(AppError::CameraNotFound)
     };
 
-    if ! cam.is_connected().await.unwrap() {
+    let is_connected = cam.is_connected()
+        .await
+        .map_err(|_| AppError::ConnectionFailure)?;
+    if ! is_connected {
         info!("trying to connect to the camera...");
-        if cam.connect().await.is_err() {
+        if let Err(_) = cam.connect().await {
             return Err(AppError::ConnectionFailure)
         }
     }
 
-    debug!("is connected? {}", cam.is_connected().await.unwrap());
+    debug!("is connected? {is_connected}");
 
-    // TODO: handle error
-    cam.discover_services()
-        .await
-        .unwrap();
+    if let Err(_) = cam.discover_services().await {
+        return Err(AppError::ConnectionFailure)
+    }
 
     Ok(cam)
 }
 
-// TODO: look for a more idiomatic way to handle these errors
 async fn find_camera(adapter: &Adapter) -> Option<Peripheral> {
-    let devices = adapter
-        .peripherals()
+    let peripherals = adapter.peripherals()
         .await
         .unwrap_or(vec![]);
 
-    for entry in devices {
-        let peripheral = entry
-            .properties()
+    for entry in peripherals {
+        let properties = entry.properties()
             .await
             .unwrap();
 
-        if peripheral.is_some() {
-            let dev = peripheral
-                .unwrap()
-                .local_name
+        if let Some(prop) = properties {
+            let dev = prop.local_name
                 .unwrap_or("".to_string());
 
-            debug!("device: {}", dev);
+            debug!("device: {dev}");
 
             if ! dev.is_empty() && dev.contains("GoPro") {
                 return Some(entry)
