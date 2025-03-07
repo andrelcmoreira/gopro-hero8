@@ -19,15 +19,19 @@ fn main() -> Result<(), Error> {
         debug!("command: {}", cmd);
 
         match cmd.as_str() {
-            "--show-camera-info" => {
+            "--show-factory-info" => {
                 match sync::get_factory_info() {
                     Ok(data) => info!("{data:?}"),
                     Err(err) => error!("{}", err.to_string())
                 };
+            },
+            "--show-wifi-info" => {
                 match sync::get_wifi_info() {
                     Ok(data) => info!("{data:?}"),
                     Err(err) => error!("{}", err.to_string())
                 };
+            },
+            "--show-status-info" => {
                 match sync::get_status_info() {
                     Ok(data) => info!("{data:?}"),
                     Err(err) => error!("{}", err.to_string())
